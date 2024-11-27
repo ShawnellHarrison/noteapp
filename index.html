@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note Taking App</title>
+    <style>
+        /* General styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Center the app content */
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Input and button styles */
+        h1, h2 {
+            text-align: center;
+        }
+
+        .note-input {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        #note-input {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        #add-note-btn {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #add-note-btn:hover {
+            background-color: #45a049;
+        }
+
+        /* Note list styles */
+        .note-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .note-item {
+            background-color: #e0f7fa;
+            padding: 10px;
+            border-radius: 4px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .note-item button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .note-item button:hover {
+            background-color: #e53935;
+        }
+
+        .error {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Note Taking App</h1>
+        
+        <!-- Note Input Form -->
+        <div class="note-input">
+            <textarea id="note-input" placeholder="Enter your note here..."></textarea>
+            <button id="add-note-btn">Add Note</button>
+        </div>
+        
+        <!-- Displaying Notes -->
+        <h2>Your Notes:</h2>
+        <div id="note-list" class="note-list">
+            <!-- Notes will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        // Select HTML elements
+        const addNoteBtn = document.getElementById('add-note-btn');
+        const noteInput = document.getElementById('note-input');
+        const noteList = document.getElementById('note-list');
+        const errorMessage = document.createElement('div');
+        errorMessage.classList.add('error');
+
+        // Array to store notes
+        let notes = [];
+
+        // Function to add a new note
+        function addNote() {
+            try {
+                // Get the note content from the input field
+                const noteContent = noteInput.value.trim();
+                
+                // Check if the input is empty
+                if (noteContent === "") {
+                    throw new Error("Note cannot be empty!");
+                }
+
+                // Add the note to the notes array
+                notes.push(noteContent);
+
+                // Clear the input field
+                noteInput.value = "";
+
+                // Update the notes list UI
+                displayNotes();
+
+            } catch (error) {
+                // Display an error message if something goes wrong
+                errorMessage.textContent = error.message;
+                document.body.appendChild(errorMessage);
+            }
+        }
+
+        // Function to display all notes
+        function displayNotes() {
+            // Clear the current list
+            noteList.innerHTML = "";
+
+            // Check if there are any notes
+            if (notes.length === 0) {
+                noteList.innerHTML = "<p>No notes added yet. Start by adding a note!</p>";
+                return;
+            }
+
+            // Create a new note item for each note
+            notes.forEach((note, index) => {
+                const noteItem = document.createElement('div');
+                noteItem.classList.add('note-item');
+                noteItem.innerHTML = `
+                    <span>${note}</span>
+                    <button onclick="deleteNote(${index})">Delete</button>
+                `;
+                noteList.appendChild(noteItem);
+            });
+        }
+
+        // Function to delete a note
+        function deleteNote(index) {
+            try {
+                // Remove the note from the notes array
+                notes.splice(index, 1);
+
+                // Update the notes list UI
+                displayNotes();
+
+            } catch (error) {
+                // Handle errors during deletion
+                console.error("Error deleting note: ", error);
+            }
+        }
+
+        // Event listener for the "Add Note" button
+        addNoteBtn.addEventListener('click', addNote);
+
+        // Display notes when the page loads
+        displayNotes();
+    </script>
+</body>
+</html>
